@@ -1,0 +1,52 @@
+{
+  "name": "parse-siwe",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "description": "Standalone, high-performance, validating 'ERC-4361: Sign in with Ethereum' Parser",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "grammar": "node_modules/apg-js/bin/apg.sh -i src/abnf.txt -o src/grammar.js --lite",
+    "cat": "cat src/parse-siwe.js src/parser.js src/grammar.js src/callbacks.js src/keccak256.js > src/parse-siwe-cat.js",
+    "terser": "terser src/parse-siwe-cat.js -c -m -o src/parse-siwe-min.js",
+    "jsdoc": "jsdoc -c src/jsdoc.json"
+  },
+  "files": [
+    "src",
+    "examples",
+    "__tests__",
+    "LICENSE.md",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ldthomas/parse-siwe.git"
+  },
+  "keywords": [
+    "siwe",
+    "parser",
+    "siwe-parser"
+  ],
+  "jest": {
+    "bail": 1,
+    "verbose": true,
+    "testRegex": "/__tests__/.*\\.test\\.js"
+  },
+  "author": "Lowell D. Thomas <ldt@sabnf.com> (https://sabnf.com/)",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/ldthomas/parse-siwe/issues"
+  },
+  "homepage": "https://github.com/ldthomas/parse-siwe#readme",
+  "devDependencies": {
+    "apg-js": "^4.4.0",
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.4",
+    "prettier": "^2.3.0",
+    "terser": "^5.24.0"
+  }
+}

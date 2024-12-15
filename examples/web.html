@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>parseSiweMessage</title>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        margin: 10px;
+        height: 100%;
+        font-size: 100%;
+      }
+      #parse {
+        width: 150px;
+      }
+      #string {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Parse an ERC-4361 Sign-In with Ethereum Message</h3>
+    <p>
+      <strong>message</strong><br />
+      <textarea id="string" wrap="soft" rows="17" cols="90"></textarea>
+    </p>
+    <p>
+      <strong>erc55 option:</strong>
+      <textarea id="erc55" wrap="soft" rows="1" cols="10">validate</textarea><br /><input
+        type="button"
+        id="parse"
+        value="parseSiweMessage()"
+      />
+    </p>
+    <p>
+      JSON.stringify(parseSiweMessage(<strong>message</strong>, null, 2))<br />
+      <i
+        >NOTES:<br />
+        &nbsp;&nbsp;1. missing optional items are undefined<br />
+        &nbsp;&nbsp;2. JSON.stringify() omits items that are undefined</i
+      >
+    </p>
+    <pre id="value"></pre>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="../src/parse-siwe-min.js"></script>
+  <script src="./web-app.js"></script>
+</html>

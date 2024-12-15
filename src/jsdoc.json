@@ -1,0 +1,6 @@
+{
+  "source": {
+    "include": ["README.md", "src/parse-siwe.js", "src/keccak256.js"]
+  },
+  "plugins": ["plugins/markdown"]
+}

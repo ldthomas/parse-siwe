@@ -1,0 +1,158 @@
+;
+; LDT 12/15/2024 
+; The ERC-4361 (https://eips.ethereum.org/EIPS/eip-4361) ABNF format has modified in several significant ways.
+; 1) Literal strings are replaced with numbers and ranges (%d32 & %d32-126, etc.) when possible.
+;    TRB and especially TRG operators are much more efficient than TLS operators.
+; 2) The message items (scheme, etc.) are first defined as general strings of any characters.
+;    On a second pass, these item are validated against the ERC_4361 format individually.
+; 3) IPv6address does not work because of APG's "first-success disambiguation" and "greedy" repetitions.
+;    IPv6address is redefined and validations moved to callback functions (semantic vs syntactic validation).
+;    Redefinition requires negative look-ahead operators, https://en.wikipedia.org/wiki/Syntactic_predicate.
+;    That is SABNF instead of simple ABNF.
+; 4) IPv4address fails because of "first-success disambiguation".
+;    This could be fixed with rearrangement of the alternative terms.
+;    However, it would still not accept zero-padded (leading zeros) decimal octets.
+;    Therefore, IPv4address is also done with callback functions and semantic validation.
+; 5) The negative look-ahead operator is also needed in the definition of host to
+;    prevent failure with a reg-name that begins with an IPv4 address.
+; 6) NOTE: host = 1.1.1.256 is a valid host name even though it is an invalid IPv4address.
+;          The IPv4address alternative fails but the reg-name alternative succeeds.
+; 7) The ERC-4361 message format ABNF allows for empty statements.
+;    Because of the "first success disambiguation" of APG
+;    the an explicit "empty-statement" rule is required to match the spec's intent.
+; 8) Basics LF, ALPHA, DIGIT and HEXDIG have been expanded in place to reduce the number of rule name operations.
+;
+siwe-first-pass =
+    [ ffscheme ] fdomain %s" wants you to sign in with your Ethereum account:" %d10
+    faddress %d10
+    (empty-statement / no-statement / actual-statement)
+    pre-uri furi %d10
+    pre-version fversion %d10
+    pre-chain-id fchain-id %d10
+    pre-nonce fnonce %d10
+    pre-issued-at fissued-at
+    [ %d10 %s"Expiration Time: " fexpiration-time ]
+    [ %d10 %s"Not Before: " fnot-before ]
+    [ %d10 %s"Request ID: " frequest-id ]
+    [ %d10 %s"Resources:" fresources]
+
+pre-uri = %s"URI: "
+pre-version       = %s"Version: "
+pre-chain-id      = %s"Chain ID: "
+pre-nonce         = %s"Nonce: "
+pre-issued-at     = %s"Issued At: "
+ffscheme          = fscheme %s"://"
+fdomain           = 1*(%d0-31 / %d33-127) ; all characters but space
+fissued-at        = 1*(%d0-9 / %d11-127)  ; all characters but linefeed
+fexpiration-time  = 1*(%d0-9 / %d11-127)
+fnot-before       = 1*(%d0-9 / %d11-127)
+furi              = 1*(%d0-9 / %d11-127)
+fscheme           = 1*(%d0-57 / %d59-127) ; any character but colon(:)
+faddress          = 1*(%d0-9 / %d11-127)
+fstatement        = 1*(%d0-9 / %d11-127)
+fversion          = 1*(%d0-9 / %d11-127)
+fchain-id         = 1*(%d0-9 / %d11-127)
+fnonce            = 1*(%d0-9 / %d11-127)
+frequest-id       = *(%d0-9 / %d11-127)
+fresources        = *( %d10 fresource )
+fresource         = "- " 1*(%d0-9 / %d11-127)
+no-statement      = %d10.10
+empty-statement   = %d10.10.10
+actual-statement  = %d10 fstatement %d10.10
+
+domain = authority
+    ; From RFC 3986:
+address = %s"0x" 40*40(%d48-57 / %d65-70 / %d97-102)
+    ; Optionally must also conform to capitalization
+    ; checksum encoding specified in EIP-55
+statement = 1*( reserved / unreserved / " " )
+    ; See RFC 3986 for the definition
+    ; of "reserved" and "unreserved".
+    ; The purpose is to exclude %d10 (line break).
+version = %s"1"
+chain-id = 1*%d48-57
+    ; See EIP-155 for valid CHAIN_IDs.
+nonce = 8*( (%d97-122 / %d65-90) / %d48-57 )
+issued-at = date-time
+expiration-time = date-time
+not-before = date-time
+    ; See RFC 3339 (ISO 8601) for the
+    ; definition of "date-time".
+request-id = *pchar
+    ; See RFC 3986 for the definition of "pchar".
+resources = *( %d10 resource )
+resource = %s"- " URI
+
+; RFC 3339 - Date and Time on the Internet: Timestamps
+date-fullyear   = 4%d48-57
+date-month      = 2%d48-57  ; 01-12
+date-mday       = 2%d48-57  ; 01-28, 01-29, 01-30, 01-31 based on
+                            ; month/year
+time-hour       = 2%d48-57  ; 00-23
+time-minute     = 2%d48-57  ; 00-59
+time-second     = 2%d48-57  ; 00-58, 00-59, 00-60 based on leap second
+                            ; rules
+time-secfrac    = %s"." 1*%d48-57
+time-numoffset  = (%s"+" / %s"-") time-hour %s":" time-minute
+time-offset     = "Z" / time-numoffset
+partial-time    = time-hour %s":" time-minute %s":" time-second
+                  [time-secfrac]
+full-date       = date-fullyear %s"-" date-month %s"-" date-mday
+full-time       = partial-time time-offset
+date-time       = full-date "T" full-time
+
+; RFC 3986 - Uniform Resource Identifier (URI): Generic Syntax
+; Modified to improve APG parsing and callback functions.
+URI           = scheme %s":" hier-part [ %s"?" query ] [ %s"#" fragment ]
+hier-part     = %s"//" authority path-abempty
+              / path-absolute
+              / path-rootless
+              / path-empty
+authority     = [ userinfo-at ] host [ %s":" port ]
+path-abempty  = *( %s"/" segment )
+path-absolute = %s"/" [ segment-nz *( %s"/" segment ) ]
+path-rootless = segment-nz *( %s"/" segment )
+path-empty    = ""
+userinfo-at   = userinfo %d64
+                ; userinfo redefined to include the "@" so that it will fail without it
+                ; otherwise userinfo can match host and then the parser will backtrack
+                ; incorrectly keeping the captured userinfo phrase
+userinfo      = *(%d97-122 / %d65-90 / %d48-57 / pct-encoded / %d33 / %d36 / %d38-46 / %d58-59 / %d61 / %d95 / %d126)
+host          = IP-literal / (IPv4address !reg-name-char) / reg-name
+                ; negative look-ahead required to prevent IPv4address from being recognized as first part of reg-name
+                ; same fix as https://github.com/garycourt/uri-js/issues/4
+IP-literal    = %s"[" ( IPv6address / IPvFuture  ) %s"]"
+IPvFuture     = "v" 1*(%d48-57 / %d65-70 / %d97-102) "." 1*( %d97-122 / %d65-90 / %d48-57 / %d33 / %d36 /%d38-46 / %d58-59 /%d61 /%d95 / %d126 )
+IPv6address   = nodcolon / dcolon
+nodcolon      = (h16n *h16cn) [%d58 IPv4address]
+dcolon        = [h16 *h16c] %d58.58 (((h16n *h16cn) [%d58 IPv4address]) / [IPv4address])
+h16           = 1*4(%d48-57 / %d65-70 / %d97-102)
+h16c          = %d58 1*4(%d48-57 / %d65-70 / %d97-102)
+h16n          = 1*4(%d48-57 / %d65-70 / %d97-102) !%d46
+h16cn         = %d58 1*4(%d48-57 / %d65-70 / %d97-102) !%d46
+IPv4address   = dec-octet %s"." dec-octet %s"." dec-octet %s"." dec-octet
+; Here we will will use callback functions to evaluate and validate the (possibly zero-padded) dec-octet.
+dec-octet     =  *3dec-digit
+dec-digit     = %d48-57
+reg-name      = *reg-name-char
+reg-name-char = %d97-122 / %d65-90 / %d48-57 / pct-encoded / %d33 / %d36 / %d38-46 / %d59 / %d61 /%d95 / %d126
+port          = *%d48-57
+query         = *(pchar / %d47 / %d63)
+fragment      = *(pchar / %d47 / %d63)
+segment       = *pchar
+segment-nz    = 1*pchar
+scheme        = (%d97-122 / %d65-90) *( (%d97-122 / %d65-90) / %d48-57 / %d43 / %d45-46)
+pchar         = %d97-122 / %d64-90 /  %d48-59 / %d33 / %d36 / %d38-46 / %d61 / %d95 / %d126 / pct-encoded
+pct-encoded   = %s"%" (%d48-57 / %d65-70 / %d97-102) (%d48-57 / %d65-70 / %d97-102)
+unreserved    = %d97-122 / %d65-90 /  %d48-57 / %d45-46 / %d95 / %d126
+reserved      = %d33 / %d35-36 / %d38-44 / %d47 / %d58-59 / %d61 / %d63-64 / %d91 / %d93
+;scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+;pchar         = unreserved / pct-encoded / sub-delims / %s":" / %s"@"
+;unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+;reserved      = gen-delims / sub-delims
+;gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+;gen-delims    = %d35 / %d47 / %d58 /%d63-64 / %d91 / %d93
+;sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+;                 / "*" / "+" / "," / ";" / "="
+;sub-delims    = %d33 / %d36 / %d38-44 / %d59 / %d61
+
