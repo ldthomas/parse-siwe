@@ -816,7 +816,7 @@ export default function grammar(){
     let str = "";
     str += ";\n";
     str += "; LDT 12/15/2024 \n";
-    str += "; The ERC-4361 (https://eips.ethereum.org/EIPS/eip-4361) ABNF format has modified in several significant ways.\n";
+    str += "; The ERC-4361 (https://eips.ethereum.org/EIPS/eip-4361) ABNF format has been modified in several significant ways.\n";
     str += "; 1) Literal strings are replaced with numbers and ranges (%d32 & %d32-126, etc.) when possible.\n";
     str += ";    TRB and especially TRG operators are much more efficient than TLS operators.\n";
     str += "; 2) The message items (scheme, etc.) are first defined as general strings of any characters.\n";
@@ -824,7 +824,7 @@ export default function grammar(){
     str += "; 3) IPv6address does not work because of APG's \"first-success disambiguation\" and \"greedy\" repetitions.\n";
     str += ";    IPv6address is redefined and validations moved to callback functions (semantic vs syntactic validation).\n";
     str += ";    Redefinition requires negative look-ahead operators, https://en.wikipedia.org/wiki/Syntactic_predicate.\n";
-    str += ";    That is SABNF instead of simple ABNF.\n";
+    str += ";    That is, SABNF instead of simple ABNF.\n";
     str += "; 4) IPv4address fails because of \"first-success disambiguation\".\n";
     str += ";    This could be fixed with rearrangement of the alternative terms.\n";
     str += ";    However, it would still not accept zero-padded (leading zeros) decimal octets.\n";

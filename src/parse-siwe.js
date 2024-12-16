@@ -55,7 +55,7 @@ Resources:
 function parseSiweMessage(msg, erc55 = 'validate') {
   const fname = 'parseSiweMessage: ';
   if (typeof msg !== 'string') {
-    throw new Error('SiweParser: input message must be of type string');
+    throw new Error(`${fname} invalid input msg: message must be of type string`);
   }
   const p = new Parser();
   const g = new Grammar();
@@ -126,8 +126,7 @@ function parseSiweMessage(msg, erc55 = 'validate') {
   // Validates an RFC 3986 URI.
   // returns true if the URI is valid, false otherwise
   function isUri(URI) {
-    const uriData = {};
-    ret = p.parse(g, 'uri', URI, uriData);
+    ret = p.parse(g, 'uri', URI, {});
     return ret.success;
   }
   // END: some parser helper functions
