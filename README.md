@@ -73,6 +73,7 @@ To generate the documentation use<br>
 `npm run jsdoc`
 
 The documentation will be at `out/index.html`.
+Or view it online [here](https://sabnf.com/docs/parse-siwe/index.html).
 
 # License
 

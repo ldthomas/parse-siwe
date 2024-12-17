@@ -1,6 +1,6 @@
 {
   "name": "parse-siwe",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "index.js",
   "description": "Standalone, high-performance, validating 'ERC-4361: Sign in with Ethereum' Parser",
