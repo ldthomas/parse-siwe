@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>parseSiweMessage</title>
+    <title>parse-siwe demo</title>
     <meta charset="utf-8" />
     <style>
       body {
@@ -12,33 +12,37 @@
       #parse {
         width: 150px;
       }
-      #string {
+      #input {
         font-family: monospace;
       }
     </style>
   </head>
   <body>
-    <h3>Parse an ERC-4361 Sign-In with Ethereum Message</h3>
+    <h2>Web application test of parse-siwe functions.</h2>
+    <h4>
+      Click on any button below for a sample input to test.<br />
+      Feel free to experiment - modify or replace the sample input.
+    </h4>
     <p>
-      <strong>message</strong><br />
-      <textarea id="string" wrap="soft" rows="17" cols="90"></textarea>
+      <input type="button" id="in_parse" value="message to parse" />
+      <input type="button" id="in_tostring" value="object to stringify" />
+      <input type="button" id="in_isuri" value="isUri" />
+      <input type="button" id="in_keccak256" value="string to hash" />
+      <input type="button" id="in_iserc55" value="address to ERC55 validate" />
+      <input type="button" id="in_toerc55" value="address to ERC55 convert" /><br />
+      <textarea id="input" wrap="soft" rows="17" cols="90"></textarea>
     </p>
     <p>
-      <strong>erc55 option:</strong>
-      <textarea id="erc55" wrap="soft" rows="1" cols="10">validate</textarea><br /><input
-        type="button"
-        id="parse"
-        value="parseSiweMessage()"
-      />
+      <input type="button" id="button_parse" value="parseSiweMessage()" />
+      <input type="button" id="button_tostring" value="siweObjectToString()" />
+      <input type="button" id="button_isuri" value="isUri()" />
+      <input type="button" id="button_keccak256" value="keccak256()" />
+      <input type="button" id="button_iserc55" value="isERC55()" />
+      <input type="button" id="button_toerc55" value="toERC55()" /><br />
+      erc55 option:<br />
+      <textarea id="erc55" wrap="soft" rows="1" cols="10"></textarea><br />
     </p>
-    <p>
-      JSON.stringify(parseSiweMessage(<strong>message</strong>, null, 2))<br />
-      <i
-        >NOTES:<br />
-        &nbsp;&nbsp;1. missing optional items are undefined<br />
-        &nbsp;&nbsp;2. JSON.stringify() omits items that are undefined</i
-      >
-    </p>
+    <h4>Selected Process Result</h4>
     <pre id="value"></pre>
   </body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>

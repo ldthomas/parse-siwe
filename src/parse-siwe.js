@@ -325,6 +325,9 @@ function isUri(URI) {
 
 /**
  * Stringify an [ERC-4361: Sign-In with Ethereum](https://eips.ethereum.org/EIPS/eip-4361) (siwe) object.
+ * Note that this function does no validation of the input object.
+ * It simply returns a string that includes the valid parts of the object, if any.
+ * For validation, use {@link parseSiweMessage}.
  *
  * @param {object} o an siwe message object (see {@link parseSiweMessage} )
  * @returns A stringified version of the object suitable as input to {@link parseSiweMessage}.
@@ -341,6 +344,9 @@ function isUri(URI) {
  */
 function siweObjectToString(o) {
   let str = '';
+  if (typeof o !== 'object') {
+    return str;
+  }
   if (o.scheme && o.scheme !== '') {
     str += `${o.scheme}://`;
   }
