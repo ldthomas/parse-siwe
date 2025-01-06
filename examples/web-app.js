@@ -118,7 +118,7 @@ const keccakInput = () => {
   const inputString = $('#input').val();
   try {
     const hash = _ps.keccak256(inputString);
-    $('#value').html('0x' + hash);
+    $('#value').html(hash);
   } catch (e) {
     $('#value').html(`processing error: ${e.message}`);
   }

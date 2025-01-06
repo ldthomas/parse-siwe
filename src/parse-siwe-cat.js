@@ -1,4 +1,4 @@
-const parseSiwe = (function () {
+parseSiwe = (function () {
   function parseSiweMessage(msg, erc55 = 'validate') {
     const fname = 'parseSiweMessage: ';
     if (typeof msg !== 'string') {
@@ -2786,8 +2786,11 @@ const parseSiwe = (function () {
     this.keccak256 = keccak256;
     this.isERC55 = isERC55;
     this.toERC55 = toERC55;
-    this.noConflict = () => this;
+    this.noConflict = () => {
+      delete _ps;
+      return this;
+    };
   }
   return new PS();
 })();
-const _ps = parseSiwe.noConflict();
+_ps = parseSiwe;

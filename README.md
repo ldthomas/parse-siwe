@@ -33,7 +33,9 @@ npm init
 npm install parse-siwe
 ```
 
-### Sample Usage
+### Node.js Usage
+
+**Simple Useage**
 
 ```
 import { parseSiweMessage } from 'parse-siwe';
@@ -63,8 +65,36 @@ try {
 
 ```
 
-`./examples/node-app.js` provides a more complete example of its usage.<br>
-`./examples/web.html` demonstrates its use in a simple web page.
+`parse-siwe` exports the following functions:
+
+```
+parseSiweMessage()
+siweObjectToString()
+isUri()
+keccak256()
+isERC55()
+toERC5()
+```
+
+`./examples/node-app.js` provides a more complete example of its usage.
+
+### Web Page Usage
+
+`src/parse-siwe-cat.js` and its minimized version, `src/parse-siwe-min.js`,
+when scripted into a web page defines the object `_ps` whose members are all of the
+exported functions. It is implemented as a self-executing function so that none of
+the inner variables are exposed to the global namespace.
+
+```
+_ps.parseSiweMessage()
+_ps.siweObjectToString()
+_ps.isUri()
+_ps.keccak256()
+_ps.isERC55()
+_ps.toERC55()
+```
+
+`./examples/web.html` demonstrates all of these functions in a simple web page.
 
 ## Documentation
 

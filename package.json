@@ -12,7 +12,11 @@
     "jsdoc": "jsdoc -c src/jsdoc.json"
   },
   "files": [
-    "src",
+    "src/callbacks.js",
+    "src/grammar.js",
+    "src/keccak256.js",
+    "src/parse-siwe.js",
+    "src/parser.js",
     "LICENSE.md",
     "README.md"
   ],
