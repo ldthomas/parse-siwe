@@ -1,4 +1,4 @@
-## parse-siwe - a Sign in with Ethereum Parser
+## parse-siwe - a "Sign in with Ethereum" Parser
 
 [ERC-4361: Sign-In with Ethereum](https://eips.ethereum.org/EIPS/eip-4361)
 establishes a standard for using an Ethereum account to sign into services that support the standard.
@@ -12,7 +12,7 @@ Some highlights of its features:
 - it is stand alone - it has no external dependencies
 - well-tested
 - URI validation - includes a complete and well-tested URI parser
-- [ERC-55](https://eips.ethereum.org/EIPS/eip-55) options - includes a keccak-256 hash function
+- [ERC-55](https://eips.ethereum.org/EIPS/eip-55) options
   - validation of Ethereum address ERC-55 encoding
   - convert the Ethereum address to ERC-55 encoding
   - ignore ERC-55 encoding
@@ -22,20 +22,7 @@ Some highlights of its features:
 - good error reporting (Well, pretty good. Usually, but not always, points out the offending message line.)
 - can be used in Node.js or web page application
 
-## Installation and Basic Usage
-
-### Installation
-
-In your working directory,
-
-```
-npm init
-npm install parse-siwe
-```
-
 ### Node.js Usage
-
-**Simple Useage**
 
 ```
 import { parseSiweMessage } from 'parse-siwe';
@@ -76,14 +63,15 @@ isERC55()
 toERC5()
 ```
 
-`./examples/node-app.js` provides a more complete example of its usage.
+[./examples/node-app.js](https://github.com/ldthomas/parse-siwe/blob/main/examples/node-app.js)
+provides a more complete example of its usage.
 
 ### Web Page Usage
 
 `src/parse-siwe-cat.js` and its minimized version, `src/parse-siwe-min.js`,
-when scripted into a web page defines the object `_ps` whose members are all of the
-exported functions. It is implemented as a self-executing function so that none of
-the inner variables are exposed to the global namespace.
+when scripted into a web page define the object `_ps` whose members are all of the
+exported functions. It is implemented as a self-executing function so that
+only the variable `_ps` is exposed to the global namespace.
 
 ```
 _ps.parseSiweMessage()
@@ -92,19 +80,41 @@ _ps.isUri()
 _ps.keccak256()
 _ps.isERC55()
 _ps.toERC55()
+_ps.noConflict()
 ```
 
-`./examples/web.html` demonstrates all of these functions in a simple web page.
+[./examples/web.html](https://github.com/ldthomas/parse-siwe/blob/main/examples/web.html)
+demonstrates all of these functions in a simple web page.
+
+In the unlikely event that you need the variable `_ps` for some other purpose,
+we follow the [jQuery.noConflict()](https://api.jquery.com/jQuery.noConflict/) convention.
+This implementation may not be as sophisticated as `jQuery`, however, `noConflict()`
+will remove `_ps` from the global namespace and return a reference to the `parse-siwe` object.
+For example,
+
+```
+$(document).ready(() => {
+  $$$ = _ps.noConflict();
+  _ps = {};
+  /*
+   * From here on $$$ references the parse-siwe object and _ps can be
+   * used for whatever value or object your application requires.
+  */
+});
+```
 
 ## Documentation
 
 The documentation is in the code as [JSDoc](https://jsdoc.app/) comments.
-To generate the documentation use<br>
-`npm run jsdoc`
+To generate the documentation use
+
+```
+npm run jsdoc
+```
 
 The documentation will be at `out/index.html`.
 Or view it online [here](https://sabnf.com/docs/parse-siwe/index.html).
 
-# License
+## License
 
-[2-Clause BSD License](https://opensource.org/licenses/BSD-2-Clause)
+[The MIT License](https://opensource.org/license/mit)

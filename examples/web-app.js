@@ -143,7 +143,6 @@ const toerc55Input = () => {
   }
 };
 $(document).ready(() => {
-  console.log('document ready called');
   clearAll();
   $('#in_parse').click(parseSetup);
   $('#in_tostring').click(tostringSetup);

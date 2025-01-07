@@ -35,7 +35,7 @@
     "testRegex": "/__tests__/.*\\.test\\.js"
   },
   "author": "Lowell D. Thomas <ldt@sabnf.com> (https://sabnf.com/)",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ldthomas/parse-siwe/issues"
   },

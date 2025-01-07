@@ -1,4 +1,4 @@
-parseSiwe = (function () {
+_ps = (function () {
   function parseSiweMessage(msg, erc55 = 'validate') {
     const fname = 'parseSiweMessage: ';
     if (typeof msg !== 'string') {
@@ -2793,4 +2793,3 @@ parseSiwe = (function () {
   }
   return new PS();
 })();
-_ps = parseSiwe;
